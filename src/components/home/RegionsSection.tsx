@@ -14,7 +14,20 @@ type Props = {
   go: (id: string) => void
 }
 
-const COMPANY_LOCATION: [number, number] = [-8.895125, 33.440549]
+const COMPANY_LOCATION: [number, number] = [-8.895108, 33.440568]
+const COMPANY_ICON = L.divIcon({
+  className: 'lishelab-hq-icon',
+  html: '<span class="lishelab-hq-marker"><span>HQ</span></span>',
+  iconSize: [42, 42],
+  iconAnchor: [21, 41],
+  popupAnchor: [0, -40],
+})
+const USER_ICON = L.divIcon({
+  className: 'lishelab-user-icon',
+  html: '<span class="lishelab-user-marker" aria-hidden="true"></span>',
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+})
 
 export function RegionsSection({ content, go }: Props) {
   const regions = resolveRegions(content)
@@ -23,8 +36,8 @@ export function RegionsSection({ content, go }: Props) {
   const [locating, setLocating] = useState(true)
   const mapRef = useRef<HTMLDivElement | null>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
-  const userMarkerRef = useRef<any>(null)
-  const companyMarkerRef = useRef<any>(null)
+  const userMarkerRef = useRef<L.Marker | null>(null)
+  const companyMarkerRef = useRef<L.Marker | null>(null)
 
   const active: HomeRegion | null = regions.find((region) => region.id === activeId) ?? regions[0] ?? null
 
@@ -45,6 +58,8 @@ export function RegionsSection({ content, go }: Props) {
 
     companyMarkerRef.current = L.marker(COMPANY_LOCATION, {
       title: 'Lishe Lab HQ',
+      icon: COMPANY_ICON,
+      zIndexOffset: 1000,
     })
       .addTo(map)
       .bindPopup('Lishe Lab HQ')
@@ -56,15 +71,18 @@ export function RegionsSection({ content, go }: Props) {
       window.setTimeout(() => setLocating(true), 0)
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          if (mapInstanceRef.current !== map) return
           const [lat, lng] = [position.coords.latitude, position.coords.longitude]
           map.setView([lat, lng], 12)
           if (userMarkerRef.current) map.removeLayer(userMarkerRef.current)
           userMarkerRef.current = L.marker([lat, lng], {
             title: 'Your location',
+            icon: USER_ICON,
           }).addTo(map).bindPopup('Your current location').openPopup()
           window.setTimeout(() => setLocating(false), 0)
         },
         () => {
+          if (mapInstanceRef.current !== map) return
           map.setView(COMPANY_LOCATION, 8)
           window.setTimeout(() => setLocating(false), 0)
         },
@@ -78,8 +96,8 @@ export function RegionsSection({ content, go }: Props) {
     return () => {
       map.remove()
       mapInstanceRef.current = null
-      userMarkerRef.current = undefined
-      companyMarkerRef.current = undefined
+      userMarkerRef.current = null
+      companyMarkerRef.current = null
     }
   }, [])
 
@@ -119,15 +137,20 @@ export function RegionsSection({ content, go }: Props) {
     window.setTimeout(() => setLocating(true), 0)
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (mapInstanceRef.current !== map) return
         const [lat, lng] = [position.coords.latitude, position.coords.longitude]
         map.setView([lat, lng], 12)
         if (userMarkerRef.current) map.removeLayer(userMarkerRef.current)
         userMarkerRef.current = L.marker([lat, lng], {
           title: 'Your location',
+          icon: USER_ICON,
         }).addTo(map).bindPopup('Your current location').openPopup()
         window.setTimeout(() => setLocating(false), 0)
       },
-      () => window.setTimeout(() => setLocating(false), 0),
+      () => {
+        if (mapInstanceRef.current !== map) return
+        window.setTimeout(() => setLocating(false), 0)
+      },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 },
     )
   }
@@ -139,7 +162,7 @@ export function RegionsSection({ content, go }: Props) {
     companyMarkerRef.current?.openPopup()
     if (userMarkerRef.current) {
       map.removeLayer(userMarkerRef.current)
-      userMarkerRef.current = undefined
+      userMarkerRef.current = null
     }
   }
 
@@ -150,7 +173,7 @@ export function RegionsSection({ content, go }: Props) {
     map.setView([region.lat, region.lng], 11)
     if (userMarkerRef.current) {
       map.removeLayer(userMarkerRef.current)
-      userMarkerRef.current = undefined
+      userMarkerRef.current = null
     }
   }
 

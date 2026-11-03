@@ -220,8 +220,8 @@ export const sendMessage = async (payload: {
   email: string
   topic: string
   message: string
-}): Promise<void> => {
-  await request('/messages', {
+}): Promise<{ emailNotificationSent: boolean }> => {
+  return request('/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

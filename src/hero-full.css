@@ -79,4 +79,3 @@
 @keyframes hero-column-loop-down{from{transform:translateY(-50%)}to{transform:translateY(0)}}
 @media(min-width:1400px){.hero-gallery{left:56%;gap:16px}.hero-gallery-col{flex:0 0 clamp(170px,12vw,232px);width:clamp(170px,12vw,232px)}}
 @media(max-width:760px){.hero-gallery{justify-content:stretch;gap:10px}.hero-gallery-col{flex:1 1 0;width:auto}}
-

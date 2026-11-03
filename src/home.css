@@ -1411,6 +1411,40 @@
   height: 100%;
   border-radius: 8px 120px 8px 8px;
 }
+.lishelab-hq-icon,
+.lishelab-user-icon {
+  border: 0;
+  background: transparent;
+}
+.lishelab-hq-icon {
+  overflow: visible;
+}
+.lishelab-hq-marker {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(6, 63, 47, 0.4);
+  transform: rotate(-45deg);
+}
+.lishelab-hq-marker > span {
+  font-size: 11px;
+  font-weight: 800;
+  transform: rotate(45deg);
+}
+.lishelab-user-marker {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #3478f6;
+  box-shadow: 0 0 0 5px rgba(52, 120, 246, 0.25), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
 .home-map::before {
   width: 440px;
   height: 300px;

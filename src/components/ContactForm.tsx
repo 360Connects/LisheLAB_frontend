@@ -18,9 +18,13 @@ export function ContactForm() {
     setState('loading')
     setFeedback('')
     try {
-      await sendMessage(values)
+      const result = await sendMessage(values)
       setState('done')
-      setFeedback('Thank you. Your message is with the team and we will reply shortly.')
+      setFeedback(
+        result.emailNotificationSent
+          ? 'Thank you. Your message is with the team and we will reply shortly.'
+          : 'Your message was saved, but we could not send the inbox notification. The team can still see it on the website.',
+      )
       setValues({ name: '', email: '', topic: topics[0], message: '' })
     } catch (err) {
       setState('error')
